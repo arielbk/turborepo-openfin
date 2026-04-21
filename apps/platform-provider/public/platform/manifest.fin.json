@@ -1,0 +1,30 @@
+{
+  "licenseKey": "openfin-demo-license-key",
+  "runtime": {
+    "arguments": "--enable-mesh --security-realm=turborepo-openfin-provider",
+    "version": "43.142.101.*"
+  },
+  "platform": {
+    "uuid": "turborepo-openfin-provider",
+    "icon": "http://localhost:5173/favicon.ico",
+    "autoShow": true,
+    "providerUrl": "http://localhost:5173/",
+    "preventQuitOnLastWindowClosed": true
+  },
+  "shortcut": {
+    "company": "Sandbox",
+    "description": "Turborepo OpenFin Platform Provider",
+    "icon": "http://localhost:5173/favicon.ico",
+    "name": "Turborepo OpenFin Provider",
+    "target": ["desktop", "start-menu"]
+  },
+  "supportInformation": {
+    "company": "Sandbox",
+    "product": "Turborepo OpenFin Provider",
+    "email": "support@example.com",
+    "forwardErrorReports": true
+  },
+  "customSettings": {
+    "apps": []
+  }
+}
