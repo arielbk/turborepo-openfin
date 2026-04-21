@@ -1,5 +1,5 @@
 {
-  "name": "platform-provider",
+  "name": "view-1",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,14 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "client": "node launch.mjs http://localhost:5173/platform/manifest.fin.json"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@openfin/core": "^43.101.2",
-    "@openfin/node-adapter": "^43.101.2",
-    "@openfin/workspace": "^23.0.20",
-    "@openfin/workspace-platform": "^23.0.20",
+    "@openfin/core": "43.101.2",
+    "@openfin/notifications": "2.13.1",
     "@repo/fdc3": "workspace:*",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"

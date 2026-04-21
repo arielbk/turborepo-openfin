@@ -1,0 +1,55 @@
+.view {
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.view header h1 {
+	margin: 0;
+	font-size: 1.5rem;
+}
+
+.view header .subtitle {
+	margin: 0.25rem 0 0;
+	opacity: 0.7;
+	font-size: 0.95rem;
+}
+
+.view .actions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+	align-items: flex-start;
+}
+
+.view button {
+	appearance: none;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: #2a2c33;
+	color: inherit;
+	padding: 0.5rem 0.9rem;
+	border-radius: 6px;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: background 0.15s, border-color 0.15s;
+}
+
+.view button:hover {
+	background: #33363e;
+	border-color: #0a76d3;
+}
+
+.view button:focus-visible {
+	outline: 2px solid #0a76d3;
+	outline-offset: 2px;
+}
+
+.view .action-message {
+	margin: 0;
+	padding: 0.6rem 0.8rem;
+	background: rgba(10, 118, 211, 0.15);
+	border-left: 3px solid #0a76d3;
+	border-radius: 4px;
+	font-size: 0.9rem;
+}
