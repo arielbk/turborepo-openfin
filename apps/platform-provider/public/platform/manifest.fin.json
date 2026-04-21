@@ -27,11 +27,11 @@
   "customSettings": {
     "apps": [
       {
-        "appId": "view-1",
-        "name": "view-1",
-        "title": "View 1",
+        "appId": "tickers",
+        "name": "tickers",
+        "title": "Tickers",
         "description": "FDC3 broadcaster + notifications demo",
-        "manifest": "http://localhost:5174/views/view-1.fin.json",
+        "manifest": "http://localhost:5174/views/tickers.fin.json",
         "manifestType": "view",
         "icons": [{ "src": "http://localhost:5173/favicon.ico" }],
         "contactEmail": "contact@example.com",

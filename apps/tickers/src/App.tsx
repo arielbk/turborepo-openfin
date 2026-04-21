@@ -70,7 +70,7 @@ function App() {
 	return (
 		<main className="view">
 			<header>
-				<h1>View 1</h1>
+				<h1>Tickers</h1>
 				<p className="subtitle">Broadcasts FDC3 instruments and fires notifications.</p>
 			</header>
 
