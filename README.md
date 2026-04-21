@@ -1,159 +1,99 @@
-# Turborepo starter
+# Turborepo OpenFin Sandbox
 
-This Turborepo starter is maintained by the Turborepo core team.
+A small turborepo that boots an [OpenFin Workspace](https://developers.openfin.co/of-docs/docs/workspace-overview) platform and demonstrates [FDC3 2.0](https://fdc3.finos.org/docs/fdc3-intro) interop between two React views.
 
-## Using this example
+## What you'll see
 
-Run the following command:
+Run the platform and you'll get an OpenFin provider window plus the Workspace **Home** launcher. From Home you can open two views:
 
-```sh
-npx create-turbo@latest
+- **Tickers** — a list of instruments. Clicking a row broadcasts an `fdc3.instrument` context on the current user channel. Starring a row broadcasts a custom `sandbox.watchlist` event on the `watchlist` app channel.
+- **Quote** — listens on both channels. The instrument panel updates when you pick a ticker; the watchlist fills up as you star things.
+
+Both views are on the same user channel (`green`) so they share context automatically.
+
+## Quick start
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-## What's inside?
+`pnpm dev` runs Vite for all three apps in parallel:
 
-This Turborepo includes the following packages/apps:
+- platform-provider on `http://localhost:5173`
+- tickers on `http://localhost:5174`
+- quote on `http://localhost:5175`
 
-### Apps and Packages
+In a second terminal, launch the OpenFin runtime against the local manifest:
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+pnpm --filter platform-provider client
 ```
 
-Without global `turbo`, use your package manager:
+This uses `@openfin/node-adapter` to download the pinned OpenFin Runtime on first run, then opens the platform window and registers Home.
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+## Try the FDC3 flow
+
+1. When Home opens, type `tickers` and press Enter to launch the Tickers view.
+2. Do the same for `quote`.
+3. Click a row in Tickers — the Quote view fills in with that instrument's details.
+4. Star a few rows — they appear in Quote's watchlist panel.
+5. Click a different row — Quote swaps instruments but the watchlist sticks, because the watchlist lives on a separate app channel.
+
+## Repo layout
+
+```
+apps/
+  platform-provider/   OpenFin Workspace platform host (port 5173)
+  tickers/             Broadcaster view (port 5174)
+  quote/               Listener view (port 5175)
+packages/
+  fdc3/                Shared @repo/fdc3 — context factories, type guards, app channels, mock catalog
+  ui/                  Shared UI components
+  eslint-config/
+  typescript-config/
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+The platform manifest lives at [apps/platform-provider/public/platform/manifest.fin.json](apps/platform-provider/public/platform/manifest.fin.json) and lists the two views as apps Home can launch. Each view has its own `*.fin.json` declaring `fdc3InteropApi: "2.0"` and joining the `green` user channel.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## How the pieces talk
 
-```sh
-turbo build --filter=docs
+```mermaid
+sequenceDiagram
+    participant User
+    participant Tickers as Tickers view
+    participant UserCh as User channel "green"
+    participant WatchCh as App channel "watchlist"
+    participant Quote as Quote view
+    User->>Tickers: click row
+    Tickers->>UserCh: broadcast fdc3.instrument
+    UserCh-->>Quote: context listener fires
+    User->>Tickers: star row
+    Tickers->>WatchCh: broadcast sandbox.watchlist
+    WatchCh-->>Quote: watchlist listener fires
 ```
 
-Without global `turbo`:
+The user channel is standard FDC3 — any app joined to `green` gets the broadcast. The watchlist uses an [app channel](https://fdc3.finos.org/docs/api/ref/DesktopAgent#getorcreatechannel) so add/remove events stay separate from the currently-selected instrument.
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+## Shared FDC3 package
 
-### Develop
+`@repo/fdc3` (in [packages/fdc3](packages/fdc3)) is where both views agree on shapes. It exposes:
 
-To develop all apps and packages, run the following command:
+- `createInstrumentContext` / `createContactContext` / `createWatchlistEvent` — factories that build FDC3-shaped contexts so a required field can't be forgotten.
+- `isInstrumentContext` / `isWatchlistEvent` — runtime type guards for incoming contexts.
+- `AppChannels.Watchlist` — the channel id, so broadcasters and listeners can't drift apart.
+- `INSTRUMENT_CATALOG` / `lookupInstrument` — a tiny mock catalog used by both views instead of a real market data API.
+- Re-exports of the FINOS FDC3 types (`Context`, `Instrument`, `Channel`, etc.) so consumers only need to depend on `@repo/fdc3`.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+## Scripts
 
-```sh
-cd my-turborepo
-turbo dev
-```
+Run from the repo root:
 
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+| Script | What it does |
+| --- | --- |
+| `pnpm dev` | Runs all apps in dev mode via turbo |
+| `pnpm build` | Builds all apps and packages |
+| `pnpm lint` | Lints everything |
+| `pnpm check-types` | TypeScript check across the workspace |
+| `pnpm format` | Prettier over `**/*.{ts,tsx,md}` |
+| `pnpm --filter platform-provider client` | Launches the OpenFin runtime against the local manifest |

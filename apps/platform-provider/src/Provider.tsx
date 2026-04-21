@@ -1,4 +1,5 @@
 import type OpenFin from "@openfin/core";
+import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { Home } from "@openfin/workspace";
 import { init } from "@openfin/workspace-platform";
@@ -9,7 +10,7 @@ import type { CustomSettings, PlatformSettings } from "./shapes";
 let isInitialized = false;
 
 function Provider() {
-	const [message, setMessage] = useState("");
+	const [message, setMessage] = useState("Starting...");
 
 	useEffect(() => {
 		if (isInitialized) return;
@@ -36,19 +37,23 @@ function Provider() {
 	}, []);
 
 	return (
-		<div style={{ fontFamily: "system-ui, sans-serif", padding: "1.5rem", color: "#fff" }}>
-			<header style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+		<div style={styles.root}>
+			<header style={styles.header}>
 				<img src={logo} alt="OpenFin" height={40} />
 				<div>
-					<h1 style={{ margin: 0 }}>Platform Provider</h1>
-					<p style={{ margin: 0, opacity: 0.7 }}>
-						Turborepo + Vite workspace platform window
-					</p>
+					<h1 style={styles.title}>Platform Provider</h1>
+					<p style={styles.tagline}>OpenFin Workspace host for the sandbox</p>
 				</div>
 			</header>
-			<main style={{ marginTop: "1.5rem" }}>
-				<p>This window initializes the workspace platform. It can be hidden later via <code>platform.autoShow</code>.</p>
-				<p style={{ opacity: 0.85 }}>{message}</p>
+			<main style={styles.main}>
+				<p>
+					This window boots the workspace platform and registers the Home launcher.
+					Use Home to open the <strong>Tickers</strong> and <strong>Quote</strong> views.
+				</p>
+				<div style={styles.status}>
+					<span style={styles.statusLabel}>Status</span>
+					<span style={styles.statusValue}>{message}</span>
+				</div>
 			</main>
 		</div>
 	);
@@ -119,5 +124,51 @@ async function getManifestCustomSettings(): Promise<{
 		customSettings: manifest.customSettings,
 	};
 }
+
+const styles: Record<string, CSSProperties> = {
+	root: {
+		fontFamily: "system-ui, sans-serif",
+		padding: "1.5rem",
+		color: "#fff",
+	},
+	header: {
+		display: "flex",
+		alignItems: "center",
+		gap: "1rem",
+	},
+	title: {
+		margin: 0,
+	},
+	tagline: {
+		margin: 0,
+		opacity: 0.7,
+	},
+	main: {
+		marginTop: "1.5rem",
+		display: "flex",
+		flexDirection: "column",
+		gap: "1rem",
+	},
+	status: {
+		display: "inline-flex",
+		alignItems: "center",
+		gap: "0.5rem",
+		padding: "0.5rem 0.75rem",
+		borderRadius: "6px",
+		background: "rgba(255, 255, 255, 0.06)",
+		border: "1px solid rgba(255, 255, 255, 0.08)",
+		fontSize: "0.9rem",
+		alignSelf: "flex-start",
+	},
+	statusLabel: {
+		textTransform: "uppercase",
+		letterSpacing: "0.08em",
+		fontSize: "0.7rem",
+		opacity: 0.6,
+	},
+	statusValue: {
+		opacity: 0.95,
+	},
+};
 
 export default Provider;
