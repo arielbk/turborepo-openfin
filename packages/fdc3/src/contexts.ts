@@ -33,6 +33,30 @@ export function createContactContext(input: { name: string; email?: string }): C
 	};
 }
 
+/**
+ * Custom app-channel payload for watchlist changes.
+ *
+ * Not part of the FDC3 standard — we carry the FDC3 `Instrument` inside a
+ * wrapping context whose `type` lives under our own namespace so listeners
+ * can discriminate add vs remove without ambiguity.
+ */
+export interface WatchlistEvent extends Context {
+	type: "sandbox.watchlist";
+	action: "add" | "remove";
+	instrument: Instrument;
+}
+
+export function createWatchlistEvent(input: {
+	action: "add" | "remove";
+	instrument: Instrument;
+}): WatchlistEvent {
+	return {
+		type: "sandbox.watchlist",
+		action: input.action,
+		instrument: input.instrument,
+	};
+}
+
 /** Narrow a generic Context to an Instrument at runtime. */
 export function isInstrumentContext(context: Context): context is Instrument {
 	return context.type === "fdc3.instrument";
@@ -41,4 +65,9 @@ export function isInstrumentContext(context: Context): context is Instrument {
 /** Narrow a generic Context to a Contact at runtime. */
 export function isContactContext(context: Context): context is Contact {
 	return context.type === "fdc3.contact";
+}
+
+/** Narrow a generic Context to a WatchlistEvent at runtime. */
+export function isWatchlistEvent(context: Context): context is WatchlistEvent {
+	return context.type === "sandbox.watchlist";
 }

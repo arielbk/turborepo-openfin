@@ -1,0 +1,112 @@
+.view {
+	padding: 1.25rem;
+	display: grid;
+	grid-template-columns: 1fr 220px;
+	gap: 1.25rem;
+	align-items: start;
+}
+
+.detail {
+	background: #26272d;
+	border-radius: 8px;
+	padding: 1.1rem 1.25rem;
+	min-height: 160px;
+}
+
+.detail-header {
+	display: flex;
+	align-items: baseline;
+	gap: 0.6rem;
+	margin-bottom: 0.9rem;
+}
+
+.detail-ticker {
+	font-size: 1.35rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+.detail-name {
+	font-size: 0.95rem;
+	opacity: 0.75;
+}
+
+.detail-grid {
+	display: grid;
+	grid-template-columns: 110px 1fr;
+	gap: 0.35rem 1rem;
+	margin: 0;
+}
+
+.detail-grid dt {
+	opacity: 0.55;
+	font-size: 0.85rem;
+}
+
+.detail-grid dd {
+	margin: 0;
+	font-size: 0.9rem;
+}
+
+.detail-grid dd.price {
+	font-variant-numeric: tabular-nums;
+}
+
+.empty {
+	margin: 0;
+	opacity: 0.6;
+	font-size: 0.95rem;
+}
+
+.empty.small {
+	font-size: 0.85rem;
+}
+
+.empty code {
+	background: rgba(255, 255, 255, 0.1);
+	padding: 1px 6px;
+	border-radius: 3px;
+}
+
+.watchlist {
+	background: #26272d;
+	border-radius: 8px;
+	padding: 1.1rem 1.25rem;
+}
+
+.watchlist h2 {
+	margin: 0 0 0.6rem;
+	font-size: 1rem;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	opacity: 0.8;
+	text-transform: uppercase;
+}
+
+.watchlist ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.watchlist li {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 0.4rem 0.55rem;
+	border-radius: 5px;
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.pin-ticker {
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+
+.pin-name {
+	font-size: 0.78rem;
+	opacity: 0.65;
+}
